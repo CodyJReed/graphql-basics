@@ -5,11 +5,22 @@ import { GraphQLServer } from "graphql-yoga";
 // Type def (schema)
 const typeDefs = `
   type Query {
+    add(a: Float!, b: Float!): Float!
+    greeting(name: String, position: String): String!
+    me: User!
+    ammo: Product!
+  }
+
+  type User {
     id: ID!
     name: String!
     age: Int!
     employed: Boolean!
     gpa: Float
+  }
+
+  type Product {
+    id: ID!
     title: String!
     price: Float!
     releaseYear: Int
@@ -20,35 +31,31 @@ const typeDefs = `
 // Resolvers
 const resolvers = {
 	Query: {
-		id() {
-			return "abc123";
+		add(parent, args, ctx, info) {
+			return args.a + args.b;
 		},
-		name() {
-			return "Sue";
+		greeting(parent, args, ctx, info) {
+			return !args.name && args.position
+				? "Hello"
+				: `Hello ${args.name}, whom is a great ${args.position}`;
 		},
-		age() {
-			return 35;
+		me() {
+			return {
+				id: "123abc",
+				name: "creed",
+				age: 35,
+				employed: true,
+			};
 		},
-		employed() {
-			return true;
-		},
-		gpa() {
-			return null;
-		},
-		title() {
-			return ".223 Federal Ammunition";
-		},
-		price() {
-			return 37.99;
-		},
-		releaseYear() {
-			return null;
-		},
-		rating() {
-			return 4.8;
-		},
-		inStore() {
-			return false;
+		ammo() {
+			return {
+				id: "def456",
+				title: ".223 Federal Ammunition",
+				price: 47.99,
+				releaseYear: 1876,
+				rating: 4.9,
+				inStore: false,
+			};
 		},
 	},
 };
