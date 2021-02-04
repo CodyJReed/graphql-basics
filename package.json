@@ -1,17 +1,17 @@
 {
-  "name": "graphql-basics",
-  "version": "1.0.0",
-  "description": "GraphQL-Basics",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node src/index.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "graphql-yoga": "^1.16.7"
-  }
+	"name": "graphql-basics",
+	"version": "1.0.0",
+	"description": "GraphQL-Basics",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon src/index.js --exec babel-node"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-preset-env": "^1.7.0",
+		"graphql-yoga": "^1.16.7"
+	}
 }
