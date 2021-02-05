@@ -2,59 +2,100 @@ import { GraphQLServer } from "graphql-yoga";
 
 // Scalar types - String, boolean, int, float, ID
 
+// Demo user data
+const users = [
+	{
+		id: "1",
+		name: "Cody",
+		email: "cody@email.com",
+		age: 35,
+	},
+	{
+		id: "2",
+		name: "Indigo",
+		email: "indy@email.com",
+	},
+];
+
+const posts = [
+	{
+		id: "1",
+		title: "How I met your mom",
+		body: "There once was a little old lady...",
+		published: false,
+	},
+	{
+		id: "2",
+		title: "Susan Clark",
+		body: 'A "keen" shop steward',
+		published: true,
+	},
+];
+
 // Type def (schema)
 const typeDefs = `
   type Query {
-    add(a: Float!, b: Float!): Float!
-    greeting(name: String, position: String): String!
+    users(query: String): [User!]!
+    posts(query: String): [Post!]!
     me: User!
-    ammo: Product!
+    post: Post!
   }
 
   type User {
     id: ID!
     name: String!
-    age: Int!
-    employed: Boolean!
-    gpa: Float
+    email: String!
+    age: Int
+    
   }
 
-  type Product {
+  type Post {
     id: ID!
     title: String!
-    price: Float!
-    releaseYear: Int
-    rating: Float
-    inStore: Boolean!
+    body: String!
+    published: Boolean!
   }
 `;
 // Resolvers
 const resolvers = {
 	Query: {
-		add(parent, args, ctx, info) {
-			return args.a + args.b;
+		users(parent, args, ctx, info) {
+			if (args.query) {
+				return users.filter(
+					user => user.name.toLowerCase() === args.query.toLowerCase()
+				);
+			} else {
+				return users;
+			}
 		},
-		greeting(parent, args, ctx, info) {
-			return !args.name && args.position
-				? "Hello"
-				: `Hello ${args.name}, whom is a great ${args.position}`;
+		posts(parent, args, ctx, info) {
+			if (args.query) {
+				return posts.filter(post => {
+					if (
+						post.title.toLowerCase().includes(args.query.toLowerCase()) ||
+						post.body.toLowerCase().includes(args.query.toLowerCase())
+					) {
+						return post;
+					}
+				});
+			} else {
+				return posts;
+			}
 		},
 		me() {
 			return {
 				id: "123abc",
 				name: "creed",
+				email: "cody@email.com",
 				age: 35,
-				employed: true,
 			};
 		},
-		ammo() {
+		post() {
 			return {
 				id: "def456",
 				title: ".223 Federal Ammunition",
-				price: 47.99,
-				releaseYear: 1876,
-				rating: 4.9,
-				inStore: false,
+				body: "A certain type of ammo with an array of case uses",
+				published: true,
 			};
 		},
 	},
