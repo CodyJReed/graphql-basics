@@ -38,14 +38,20 @@ const comments = [
   {
     id: "1",
     text: "This has been fun so far",
+    author: "1",
+    post: "1",
   },
   {
     id: "2",
     text: "Yes, I would agree with the comment before",
+    author: "2",
+    post: "1",
   },
   {
     id: "3",
     text: "I have no idea what the two of you are talking about; this sucks!",
+    author: "2",
+    post: "1",
   },
 ];
 
@@ -65,6 +71,7 @@ const typeDefs = `
     email: String!
     age: Int
 		posts: [Post!]!
+		comments: [Comment!]
   }
 
   type Post {
@@ -73,11 +80,14 @@ const typeDefs = `
     body: String!
     published: Boolean!
 		author: User!
+		comments: [Comment!]!
   }
 
 	type Comment {
 		id: ID!
 		text: String!
+		author: User!
+		post: Post!
 	}
 `;
 // Resolvers
@@ -139,10 +149,24 @@ const resolvers = {
     author(parent, args, ctx, info) {
       return users.find((user) => user.id === parent.author);
     },
+    comments(parent, args, ctx, info) {
+      return comments.filter((comment) => parent.id === comment.post);
+    },
   },
   User: {
     posts(parent, args, ctx, info) {
       return posts.filter((post) => parent.id === post.author);
+    },
+    comments(parent, args, ctx, info) {
+      return comments.filter((comment) => parent.id === comment.author);
+    },
+  },
+  Comment: {
+    author(parent, args, ctx, info) {
+      return users.find((user) => user.id === parent.author);
+    },
+    post(parent, args, ctx, info) {
+      return posts.find((post) => post.id === parent.post);
     },
   },
 };
