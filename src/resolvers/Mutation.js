@@ -41,6 +41,35 @@ const Mutation = {
 
     return deletedUsers[0];
   },
+  updateUser(parents, args, { db }, info) {
+    const user = db.users.find((user) => user.id === args.id);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (typeof args.data.email === "string") {
+      const emailTaken = db.users.some(
+        (user) => user.email === args.data.email
+      );
+
+      if (emailTaken) {
+        throw new Error("Email taken");
+      }
+
+      user.email = args.data.email;
+    }
+
+    if (typeof args.data.name === "string") {
+      user.name = args.data.name;
+    }
+
+    if (typeof args.data.age !== undefined) {
+      user.age === args.data.age;
+    }
+
+    return user;
+  },
 
   /* -- Post -- */
   createPost(parent, args, { db }, info) {
@@ -73,6 +102,35 @@ const Mutation = {
     db.comments = db.comments.filter((comment) => comment.post !== args.id);
 
     return deletedPosts[0];
+  },
+  updatePost(parent, args, { db }, info) {
+    const { id, data } = args;
+    const post = db.posts.find((post) => post.id === id);
+
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    if (typeof data.title === "string") {
+      post.title = data.title;
+    }
+    if (typeof data.body === "string") {
+      post.body = data.body;
+    }
+    if (typeof data.published === "boolean") {
+      post.published = data.published;
+    }
+    if (typeof data.author === "string" && data.author !== post.author.id) {
+      let user = db.users.some((user) => user.id === data.author);
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      post.author = data.author;
+    }
+
+    return post;
   },
 
   /* -- Comment -- */
@@ -112,6 +170,20 @@ const Mutation = {
     const deletedComments = db.comments.splice(commentIndex, 1);
 
     return deletedComments[0];
+  },
+  updateComment(parent, args, { db }, info) {
+    const { id, data } = args;
+    const comment = db.comments.find((comment) => comment.id === id);
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    if (typeof data.text === "string") {
+      comment.text = data.text;
+    }
+
+    return comment;
   },
 };
 
